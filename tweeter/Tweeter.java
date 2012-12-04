@@ -51,17 +51,21 @@ public class Tweeter {
         while(next){
             char c;
             System.out.println("What would you like to do?\n");
-            System.out.println("E: Edit Profile Information");
-            System.out.println("P: View Posts from Subscribed");
-            System.out.println("F: View a Friend's Profile");
-            System.out.println("A: Add a Friend");
+            System.out.println("P: Edit Profile Information");
+            System.out.println("E: View Posts from Everyone");
+            System.out.println("S: View Posts from Subscribed");
+            System.out.println("F: View a User's Profile");
+            System.out.println("A: Add a Subscription");
             System.out.println("Q: Quit");
             c = charIn();
 
-            if(c == 'e'){
+            if(c == 'p'){
                 editProfile();
-            }else if(c == 'p'){
+            }else if(c == 'e'){
                 viewPosts();
+            }
+            else if(c== 's'){
+                viewSubscript();
             }
             else if(c == 'f'){
                 viewFriend();
@@ -92,54 +96,49 @@ public class Tweeter {
             System.out.println("Q: I'm done");
 
             c = charIn();
+
             Conn db = new Conn();
+
 
             if(c == 'f'){
                 System.out.println("What is your first name?");
                 s = stringIn();
                 //save to database
-                db.insertQuery("UPDATE profile SET fname = '"+ s 
-					+ "' WHERE id = " + current.getId() + ";");
+                db.insertQuery("UPDATE profile SET fname = '"+ s + "' WHERE id = "+current.getId()+";");
             }
             else if(c == 'l'){
                 System.out.println("What is your last name?");
                 s = stringIn();
                 //save to database
-                db.insertQuery("UPDATE profile SET lname = '"+ s 
-					+ "' WHERE id = " + current.getId() + ";");
+                db.insertQuery("UPDATE profile SET lname = '"+ s + "' WHERE id = "+current.getId()+";");
             }
             else if(c == 'e'){
                 System.out.println("What is your email address?");
                 s = stringIn();
                 //save database
-                db.insertQuery("UPDATE profile SET email = '"+ s 
-					+ "' WHERE id = " + current.getId() + ";");
+                db.insertQuery("UPDATE profile SET email = '"+ s + "' WHERE id = "+current.getId()+";");
             }
             else if(c == 'g'){
                 System.out.println("What is your gender?");
                 s = stringIn();
                 //save to database
-                db.insertQuery("UPDATE profile SET gender = '"+ s 
-					+ "' WHERE id = " + current.getId() + ";");
+                db.insertQuery("UPDATE profile SET gender = '"+ s + "' WHERE id = "+current.getId()+";");
             }
             else if(c == 'r'){
                 System.out.println("What is your relationship status?");
                 s = stringIn();
                 //save to database
-                db.insertQuery("UPDATE profile SET rltnship = '"+ s 
-					+ "' WHERE id = " + current.getId() + ";");
+                db.insertQuery("UPDATE profile SET rltnship = '"+ s + "' WHERE id = "+current.getId()+";");
             }
             else if(c == 'p'){
                 System.out.println("Make profile public to anyone? (y/n)");
                 if(boolIn()){
                     //save as public
-                    db.insertQuery("UPDATE profile SET public_profile = 1 WHERE id = " 
-						+ current.getId() + ";");
+                    db.insertQuery("UPDATE profile SET public_profile = '"+ '1' + "' WHERE id = "+current.getId()+";");
                 }
                 else{
                     //save as private
-                    db.insertQuery("UPDATE profile SET public_profile = 0 WHERE id = " 
-						+ current.getId() + ";");
+                    db.insertQuery("UPDATE profile SET public_profile = '"+ '0' + "' WHERE id = "+current.getId()+";");
                 }
             }
             else if(c == 'q'){
@@ -152,8 +151,8 @@ public class Tweeter {
         }
 
     }
-
-	/**
+    
+    /**
      * Prints all posts from users to which current is subscribed
      * @throws SQLException 
      */
@@ -167,18 +166,6 @@ public class Tweeter {
 
     private static void viewSubscript() throws SQLException{
 
-    }	
-        
-    private static boolean register() throws SQLException{
-        return true;
-    }
-    
-    /**
-     * Prints all posts from users to which current is subscribed
-     * @throws SQLException 
-     */
-    private static void viewPosts() throws SQLException{
-           //print subscriptions
     }
 
     private static void viewFriend() throws SQLException{
@@ -214,32 +201,34 @@ public class Tweeter {
             System.out.println(temp);        
         }
         
-        rs.close();
-        
         //search and print that friend's profile
     }
-    
-    /**
-     * Adds a subscription to currently logged in user
-     * @throws SQLException 
-     */
+
     private static void addFriend() throws SQLException {
-        
-        //ask user for input
+        /*String f;
+        String l;
+        System.out.println("What is the first name of the person you wish to add?");
+        f = stringIn();
+        System.out.println("What is the last name of the person you wish to add?");
+        l = stringIn();*/
+
+        //query
         String name;
         System.out.println("What is the username of the person you want to subscribe to?");
-        name = stringIn();
-        
-        //connect to the database to execute a query
+        name=stringIn();
+
+
+
         Conn db = new Conn();
+
         ResultSet rs;
+
         rs = db.searchQuery("SELECT u.id FROM users_330 AS u WHERE username = " + name);
         while(rs.next()){
             db.insertQuery("INSERT INTO subs (o_user, s_user) VALUES (" 
                     + current.getId() + ", " 
                     + rs.getInt("id") + ")");       
         }
-        
         System.out.println("Sorry, that user does not exist.");
 
 
@@ -284,13 +273,15 @@ public class Tweeter {
                     System.out.println("What username would you like to use?");
                     //make sure it is not in use  if(!)
                     System.out.println("What would you like your password to be?");
-                    password = stringIn();
+                    password=stringIn();
                     //set username & password
                     break;
 
                 }
 
             }
+
+
         }
     }
 
@@ -362,5 +353,9 @@ public class Tweeter {
         c = s.charAt(0);
 
         return c;
+    }
+    
+    private static boolean register(){
+        return true;
     }
 }
