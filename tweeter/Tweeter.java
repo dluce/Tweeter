@@ -52,6 +52,7 @@ public class Tweeter {
             char c;
             System.out.println("What would you like to do?\n");
             System.out.println("P: Edit Profile Information");
+            System.out.println("T: Tweet a Post");
             System.out.println("E: View Posts from Everyone");
             System.out.println("S: View Posts from Subscribed");
             System.out.println("F: View a User's Profile");
@@ -61,7 +62,10 @@ public class Tweeter {
 
             if(c == 'p'){
                 editProfile();
-            }else if(c == 'e'){
+            }else if(c=='t'){
+                tweet();
+            }
+            else if(c == 'e'){
                 viewPosts();
             }
             else if(c== 's'){
@@ -156,15 +160,48 @@ public class Tweeter {
      * Prints all posts from users to which current is subscribed
      * @throws SQLException 
      */
+    private static void tweet() throws SQLException{
+        String s;
+        char c;
+        Conn db = new Conn();
+        while(true){
+            System.out.println("Would you like to post a private or public tweet? 0 for private, 1 for public");
+            c=charIn();
+            if(c=='0' || c=='1'){
+                break;
+            }
+            System.out.println("Invalid Input");
+        }
+
+        System.out.println("Enter the tweet you wish to post.");
+        s=stringIn();
+
+
+        db.insertQuery("INSERT INTO posts_330 (content, user_id, public_post) VALUES ("
+                + s + ", " + current.getId() + ", " + c + ")");
+
+    }
+
     private static void viewPosts() throws SQLException{
            //print posts from everyone
         Conn db = new Conn();
         ResultSet rs;
-        rs = db.searchQuery("SELECT user_id, time, content FROM posts_330 WHERE public_post=1 ORDER BY time ASC;");
+        rs = db.searchQuery("SELECT user_id, time, content FROM posts_330 WHERE public_post=1 ORDER BY time ASC LIMIT 10;");
+        displayPosts(rs);
+
 
     }
 
     private static void viewSubscript() throws SQLException{
+        Conn db = new Conn();
+        ResultSet rs;
+        rs = db.searchQuery("SELECT p.user_id, p.time, p.content FROM posts_330 AS p INNER JOIN"
+                +" subs AS s WHERE p.user_id = s.s_user AND s.s_user ORDER BY time ASC LIMIT 10;");
+        displayPosts(rs);
+
+    }
+
+    private static void displayPosts(ResultSet rs){
 
     }
 
