@@ -51,17 +51,21 @@ public class Tweeter {
         while(next){
             char c;
             System.out.println("What would you like to do?\n");
-            System.out.println("E: Edit Profile Information");
-            System.out.println("P: View Posts from Subscribed");
-            System.out.println("F: View a Friend's Profile");
-            System.out.println("A: Add a Friend");
+            System.out.println("P: Edit Profile Information");
+            System.out.println("E: View Posts from Everyone");
+            System.out.println("S: View Posts from Subscribed");
+            System.out.println("F: View a User's Profile");
+            System.out.println("A: Add a Subscription");
             System.out.println("Q: Quit");
             c = charIn();
 
-            if(c == 'e'){
+            if(c == 'p'){
                 editProfile();
-            }else if(c == 'p'){
+            }else if(c == 'e'){
                 viewPosts();
+            }
+            else if(c== 's'){
+                viewSubscript();
             }
             else if(c == 'f'){
                 viewFriend();
@@ -92,38 +96,49 @@ public class Tweeter {
             System.out.println("Q: I'm done");
 
             c = charIn();
+
+            Conn db = new Conn();
+
+
             if(c == 'f'){
                 System.out.println("What is your first name?");
                 s = stringIn();
                 //save to database
+                db.insertQuery("UPDATE profile SET fname = '"+ s + "' WHERE id = "+current.getId()+";");
             }
             else if(c == 'l'){
                 System.out.println("What is your last name?");
                 s = stringIn();
                 //save to database
+                db.insertQuery("UPDATE profile SET lname = '"+ s + "' WHERE id = "+current.getId()+";");
             }
             else if(c == 'e'){
                 System.out.println("What is your email address?");
                 s = stringIn();
                 //save database
+                db.insertQuery("UPDATE profile SET email = '"+ s + "' WHERE id = "+current.getId()+";");
             }
             else if(c == 'g'){
                 System.out.println("What is your gender?");
                 s = stringIn();
                 //save to database
+                db.insertQuery("UPDATE profile SET gender = '"+ s + "' WHERE id = "+current.getId()+";");
             }
             else if(c == 'r'){
                 System.out.println("What is your relationship status?");
                 s = stringIn();
                 //save to database
+                db.insertQuery("UPDATE profile SET rltnship = '"+ s + "' WHERE id = "+current.getId()+";");
             }
             else if(c == 'p'){
                 System.out.println("Make profile public to anyone? (y/n)");
                 if(boolIn()){
                     //save as public
+                    db.insertQuery("UPDATE profile SET public_profile = '"+ '1' + "' WHERE id = "+current.getId()+";");
                 }
                 else{
                     //save as private
+                    db.insertQuery("UPDATE profile SET public_profile = '"+ '0' + "' WHERE id = "+current.getId()+";");
                 }
             }
             else if(c == 'q'){
@@ -142,7 +157,11 @@ public class Tweeter {
      * @throws SQLException 
      */
     private static void viewPosts() throws SQLException{
-           //print subscriptions
+           //print posts from everyone
+    }
+
+    private static void viewSubscript() throws SQLException{
+
     }
 
     private static void viewFriend() throws SQLException{
