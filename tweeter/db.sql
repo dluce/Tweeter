@@ -1,4 +1,5 @@
-CREATE DATABASE IF NOT EXISTS twitter;
+DROP DATABASE IF EXISTS twitter;
+CREATE DATABASE twitter;
 USE twitter;
 
 DROP TABLE IF EXISTS users_330;
@@ -9,10 +10,10 @@ DROP TABLE IF EXISTS profile;
 
 -- table of users
 CREATE TABLE users_330 (
-	id INTEGER NOT NULL,
+	id INT(11) NOT NULL,
 	username VARCHAR(50),
 	password VARCHAR(40),
-	PRIMARY KEY (id)
+	PRIMARY KEY(id)
 );
 
 -- table of all posts made by users
@@ -38,7 +39,7 @@ CREATE TABLE posts_330 (
 );
 
 CREATE TABLE profile (
-	id INTEGER NOT NULL,
+	id INT(11) NOT NULL,
 	fname VARCHAR(50) DEFAULT NULL,
 	lname VARCHAR(50) DEFAULT NULL,
 	email VARCHAR(100) DEFAULT NULL,
@@ -56,17 +57,14 @@ CREATE TABLE profile (
 -- through association of users_330(id)'s.
 CREATE TABLE subs (
 	-- original user
-	o_user INTEGER NOT NULL,
+	o_user INT(11) NOT NULL,
 	
 	-- subscribed user
-	s_user INTEGER NOT NULL,
+	s_user INT(11) NOT NULL
 	
-	FOREIGN KEY (o_user) REFERENCES user_330(id),
-	FOREIGN KEY (s_user) REFERENCES user_330(id)
 );
 
 CREATE TABLE topics (
 	id INTEGER NOT NULL,
 	title VARCHAR(100)
 );
-
