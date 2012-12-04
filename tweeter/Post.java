@@ -7,7 +7,8 @@ import java.sql.Timestamp;
  */
 public class Post {
     
-    Post(User u, Timestamp ts, String t){
+    Post(String c, User u, Timestamp ts, String t){
+        content = c;
         isPublic = true;
         time = ts;
         user = u.getName();
@@ -21,6 +22,10 @@ public class Post {
         isPublic = false;
     }
     
+    public void print(){
+        System.out.print(user + " says: " + content);
+        
+    }
     public String content;
     public String user;
     public boolean isPublic;

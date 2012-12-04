@@ -10,4 +10,9 @@ package tweeter;
  */
 public class Topic {
     
+    Topic(String s){
+        topic = s;
+    }
+    
+    String topic;
 }
