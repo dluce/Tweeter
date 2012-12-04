@@ -15,77 +15,69 @@ import java.lang.String;
  *
  * @author David
  */
-
-//comment
 public class Tweeter {
 
-    /**
-     * @param args the command line arguments
-     */
+    //global variables
     private static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     private static String user;
     private static User current;
+    
+    /**
+     * 
+     * @param args The command line arguments
+     * @throws SQLException
+     */
+    public static void main(String[] args) throws SQLException{
+        //introduction
+        System.out.println("Welcome to Tweeter! Would you like to login, register,"
+                + "or browse public Tweets? ");
+        System.out.println("L: Login\n"
+                + "R: Register\n"
+                + "B: Browse");
+        
+        //Interpret input as a char
+        char in = charIn();
+        boolean next;
+        
+        switch (in) {
+            case 'l' : next = login();
+                break;
+            case 'r' : next = register();
+                break;
+            default  : next = false;
+                break;
+        }
 
-    public static void main(String[] args) {
-        // TODO code application logic here
-//        Connection con;
-//        try {
-//            System.out.println("Before loading drivers: ");
-//            listDrivers();
-// Load the MySQL JDBC driver
-//        Class.forName("com.mysql.jdbc.Driver") ;
-//        System.out.println("MySQL JDBC driver loaded ok.");
-//        
-//        con = DriverManager.getConnection(
-//            "jdbc:mysql://localhost:3306/twitter?"
-//            + "user=dluce&password=gurren5");
-//        
-//        System.out.println("Connected with host:port/database.");
-//        con.close();
-//        
-//        } catch (Exception e) {
-//            System.err.println("Exception: " + e.getMessage());
-//        }
-
-        login();
-
-        while(true){
+        while(next){
             char c;
             System.out.println("What would you like to do?\n");
             System.out.println("E: Edit Profile Information");
-            System.out.println("V: View Subscriptions");
+            System.out.println("P: View Posts from Subscribed");
             System.out.println("F: View a Friend's Profile");
-            System.out.println("S: Subscribe to a User");
+            System.out.println("A: Add a Friend");
             System.out.println("Q: Quit");
-            c=charIn();
+            c = charIn();
 
-            if(c=='e'){
+            if(c == 'e'){
                 editProfile();
-            }else if(c=='v'){
+            }else if(c == 'p'){
                 viewPosts();
             }
-            else if(c=='f'){
+            else if(c == 'f'){
                 viewFriend();
             }
-            else if(c=='s'){
+            else if(c == 'a'){
                 addFriend();
             }
-            else if(c=='q'){
+            else if(c == 'q'){
                 break;
             }
         }
         
         
     }
-//    private static void listDrivers() {
-//        Enumeration driverList = DriverManager.getDrivers();
-//        while (driverList.hasMoreElements()) {
-//            Driver driverClass = (Driver) driverList.nextElement();
-//            System.out.println("   "+driverClass.getClass().getName());
-//        }
-//    }
 
-    private static void editProfile(){
+    private static void editProfile() throws SQLException {
         char c;
         String s;
         while(true){
@@ -99,33 +91,33 @@ public class Tweeter {
             System.out.println("P: Make Profile Public to Anyone?");
             System.out.println("Q: I'm done");
 
-            c=charIn();
-            if(c=='f'){
+            c = charIn();
+            if(c == 'f'){
                 System.out.println("What is your first name?");
-                s=stringIn();
+                s = stringIn();
                 //save to database
             }
-            else if(c=='l'){
+            else if(c == 'l'){
                 System.out.println("What is your last name?");
-                s=stringIn();
+                s = stringIn();
                 //save to database
             }
-            else if(c=='e'){
+            else if(c == 'e'){
                 System.out.println("What is your email address?");
-                s=stringIn();
+                s = stringIn();
                 //save database
             }
-            else if(c=='g'){
+            else if(c == 'g'){
                 System.out.println("What is your gender?");
-                s=stringIn();
+                s = stringIn();
                 //save to database
             }
-            else if(c=='r'){
+            else if(c == 'r'){
                 System.out.println("What is your relationship status?");
-                s=stringIn();
+                s = stringIn();
                 //save to database
             }
-            else if(c=='p'){
+            else if(c == 'p'){
                 System.out.println("Make profile public to anyone? (y/n)");
                 if(boolIn()){
                     //save as public
@@ -144,36 +136,60 @@ public class Tweeter {
         }
 
     }
-
-    private static void viewPosts(){
-           //print subscription
+    
+    /**
+     * Prints all posts from users to which current is subscribed
+     * @throws SQLException 
+     */
+    private static void viewPosts() throws SQLException{
+           //print subscriptions
     }
 
-    private static void viewFriend(){
+    private static void viewFriend() throws SQLException{
         String s;
         System.out.println("Which friend's profile would you like "
                 + "to see (search by username)? ");
         s = stringIn();
         
         Conn db = new Conn();
-
         ResultSet rs;
-
         rs = db.searchQuery("SELECT u.username, p.fname, p.lname, p.email, p.gender, p.rltnship "
                 + "FROM users_330 AS u "
                 + "INNER JOIN profile AS p "
-                + "WHERE u.id = p.id;");
+                + "WHERE u.id = "
+                + current.getId()
+                + " AND p.id = "
+                + current.getId() + ";");
+        
+        //should only have one row result
+        //print out profile information of the given user
+        while(rs.next()){
+            String temp = rs.getString("username");
+            System.out.println(temp);
+            temp = rs.getString("fname");
+            System.out.println(temp);
+            temp = rs.getString("lname");
+            System.out.println(temp);
+            temp = rs.getString("email");
+            System.out.println(temp);           
+            temp = rs.getString("gender");
+            System.out.println(temp);
+            temp = rs.getString("rltnship");
+            System.out.println(temp);        
+        }
+        
         //search and print that friend's profile
     }
 
-    private static void addFriend(){
+    private static void addFriend() throws SQLException {
         /*String f;
         String l;
         System.out.println("What is the first name of the person you wish to add?");
         f = stringIn();
         System.out.println("What is the last name of the person you wish to add?");
-        l = stringIn();  */
+        l = stringIn();*/
 
+        //query
         String name;
         System.out.println("What is the username of the person you want to subscribe to?");
         name=stringIn();
@@ -184,37 +200,48 @@ public class Tweeter {
 
         ResultSet rs;
 
-        rs = db.searchQuery("SELECT u.username FROM users_330 AS u WHERE username = " + name);
+        rs = db.searchQuery("SELECT u.id FROM users_330 AS u WHERE username = " + name);
         while(rs.next()){
-            Statement sta = db.createStatement();
-            sta.executeUpdate("INSERT INTO subs (o_user, s_user) VALUES ("+user.getName()+", "+rs.getString(1)+")");
-            return;
+            db.insertQuery("INSERT INTO subs (o_user, s_user) VALUES (" 
+                    + current.getId() + ", " 
+                    + rs.getInt("id") + ")");       
         }
         System.out.println("Sorry, that user does not exist.");
 
 
-
     }
 
-    private static void login(){
-        String password="";
+    private static boolean login() throws SQLException {
+        String password;
 
         while(true){
             System.out.println("Are you a registered member?");
 
             if(boolIn()){
-                   
-                System.out.println("What is your username?");
+                //get username   
+                System.out.println("Enter username:");
                 user = stringIn();
-  //------------check if user is valid     if(!){
-                System.out.println("Invalid username.");
-                //else{
+                
+                //get password
                 System.out.println("What is your password?");
                 password = stringIn();
-                    //if password is valid
-                System.out.println("Welcome " + user);
-                current = new User(user);
-                return;
+                
+                //validate
+                
+                Conn db = new Conn();
+                ResultSet rs;
+                rs = db.searchQuery("SELECT * FROM users_330 WHERE "
+                        + "username = " + user 
+                        + "AND password = " + password + ";");
+                
+                if(rs.next()){
+                    System.out.println("Welcome " + user);
+                    current = new User(user);
+                    return true;
+                }
+                else{
+                    continue;
+                }
             }
 
             else{
@@ -303,5 +330,9 @@ public class Tweeter {
         c = s.charAt(0);
 
         return c;
+    }
+    
+    private static boolean register(){
+        return true;
     }
 }
