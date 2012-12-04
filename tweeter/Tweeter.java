@@ -51,21 +51,21 @@ public class Tweeter {
             char c;
             System.out.println("What would you like to do?\n");
             System.out.println("E: Edit Profile Information");
-            System.out.println("P: View Posts from Subscribed");
+            System.out.println("V: View Subscriptions");
             System.out.println("F: View a Friend's Profile");
-            System.out.println("A: Add a Friend");
+            System.out.println("S: Subscribe to a User");
             System.out.println("Q: Quit");
             c=charIn();
 
             if(c=='e'){
                 editProfile();
-            }else if(c=='p'){
+            }else if(c=='v'){
                 viewPosts();
             }
             else if(c=='f'){
                 viewFriend();
             }
-            else if(c=='a'){
+            else if(c=='s'){
                 addFriend();
             }
             else if(c=='q'){
@@ -154,24 +154,41 @@ public class Tweeter {
         s = stringIn();
         
         Conn db = new Conn();
-        
-        db.searchQuery("SELECT u.username, p.fname, p.lname, p.email, p.gender, p.rltnship"
-                + "FROM users_330 AS u"
-                + "INNER JOIN profile AS p"
-                + "WHERE "
-                + current.getID());
+
+        ResultSet rs;
+
+        rs = db.searchQuery("SELECT u.username, p.fname, p.lname, p.email, p.gender, p.rltnship "
+                + "FROM users_330 AS u "
+                + "INNER JOIN profile AS p "
+                + "WHERE u.id = p.id;");
         //search and print that friend's profile
     }
 
     private static void addFriend(){
-        String f;
+        /*String f;
         String l;
         System.out.println("What is the first name of the person you wish to add?");
         f = stringIn();
         System.out.println("What is the last name of the person you wish to add?");
-        l = stringIn();
+        l = stringIn();  */
 
-        //query
+        String name;
+        System.out.println("What is the username of the person you want to subscribe to?");
+        name=stringIn();
+
+
+
+        Conn db = new Conn();
+
+        ResultSet rs;
+
+        rs = db.searchQuery("SELECT u.username FROM users_330 AS u WHERE username = " + name);
+        while(rs.next()){
+            Statement sta = db.createStatement();
+            sta.executeUpdate("INSERT INTO subs (o_user, s_user) VALUES ("+user.getName()+", "+rs.getString(1)+")");
+            return;
+        }
+        System.out.println("Sorry, that user does not exist.");
 
 
 
