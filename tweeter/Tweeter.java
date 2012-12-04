@@ -159,6 +159,10 @@ public class Tweeter {
      */
     private static void viewPosts() throws SQLException{
            //print posts from everyone
+        Conn db = new Conn();
+        ResultSet rs;
+        rs = db.searchQuery("SELECT user_id, time, content FROM posts_330 WHERE public_post=1 ORDER BY time ASC;");
+
     }
 
     private static void viewSubscript() throws SQLException{
