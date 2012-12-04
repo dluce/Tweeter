@@ -22,27 +22,28 @@ public class Tweeter {
      */
     private static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     private static String user;
+    private static User current;
 
     public static void main(String[] args) {
         // TODO code application logic here
-        Connection con;
-        try {
+//        Connection con;
+//        try {
 //            System.out.println("Before loading drivers: ");
 //            listDrivers();
 // Load the MySQL JDBC driver
-        Class.forName("com.mysql.jdbc.Driver") ;
-        System.out.println("MySQL JDBC driver loaded ok.");
-        
-        con = DriverManager.getConnection(
-            "jdbc:mysql://localhost:3306/twitter?"
-            + "user=dluce&password=gurren5");
-        
-        System.out.println("Connected with host:port/database.");
-        con.close();
-        
-        } catch (Exception e) {
-            System.err.println("Exception: " + e.getMessage());
-        }
+//        Class.forName("com.mysql.jdbc.Driver") ;
+//        System.out.println("MySQL JDBC driver loaded ok.");
+//        
+//        con = DriverManager.getConnection(
+//            "jdbc:mysql://localhost:3306/twitter?"
+//            + "user=dluce&password=gurren5");
+//        
+//        System.out.println("Connected with host:port/database.");
+//        con.close();
+//        
+//        } catch (Exception e) {
+//            System.err.println("Exception: " + e.getMessage());
+//        }
 
         login();
 
@@ -131,7 +132,7 @@ public class Tweeter {
                     //save as private
                 }
             }
-            else if(c=='q'){
+            else if(c == 'q'){
                 return;
             }
             else{
@@ -148,8 +149,17 @@ public class Tweeter {
 
     private static void viewFriend(){
         String s;
-        System.out.println("Which friend's profile would you like to see?");
-        s=stringIn();
+        System.out.println("Which friend's profile would you like "
+                + "to see (search by username)? ");
+        s = stringIn();
+        
+        Conn db = new Conn();
+        
+        db.searchQuery("SELECT u.username, p.fname, p.lname, p.email, p.gender, p.rltnship"
+                + "FROM users_330 AS u"
+                + "INNER JOIN profile AS p"
+                + "WHERE "
+                + current.getID());
         //search and print that friend's profile
     }
 
@@ -157,9 +167,9 @@ public class Tweeter {
         String f;
         String l;
         System.out.println("What is the first name of the person you wish to add?");
-        f=stringIn();
+        f = stringIn();
         System.out.println("What is the last name of the person you wish to add?");
-        l=stringIn();
+        l = stringIn();
 
         //query
 
@@ -174,24 +184,25 @@ public class Tweeter {
             System.out.println("Are you a registered member?");
 
             if(boolIn()){
-
-                    System.out.println("What is your username?");
-                    user=stringIn();
-      //------------check if user is valid     if(!){
-                        System.out.println("Invalid username.");
-                    //else{
-                        System.out.println("What is your password?");
-                        password=stringIn();
-                        //if password is valid
-                            System.out.println("Welcome "+user);
-                            return;
+                   
+                System.out.println("What is your username?");
+                user = stringIn();
+  //------------check if user is valid     if(!){
+                System.out.println("Invalid username.");
+                //else{
+                System.out.println("What is your password?");
+                password = stringIn();
+                    //if password is valid
+                System.out.println("Welcome " + user);
+                current = new User(user);
+                return;
             }
 
             else{
                 while(true){
 
-                System.out.println("What username would you like to use?");
-                //make sure it is not in use  if(!)
+                    System.out.println("What username would you like to use?");
+                    //make sure it is not in use  if(!)
                     System.out.println("What would you like your password to be?");
                     password=stringIn();
                     //set username & password
@@ -219,19 +230,28 @@ public class Tweeter {
                 e.printStackTrace();
             }
             stringIn = stringIn.toLowerCase(); //add capitalized input functionality
-            if(stringIn.length()>0)//block error from empty return
+            
+            if(stringIn.length()>0){//block error from empty return
                 charIn = stringIn.charAt(0); //add full word functionality
-
+            }
             //translate english to boolean
-            if(charIn=='y')
+            if(charIn=='y'){
                 return true;
-            else if(charIn=='n')
+            }
+            else if(charIn=='n'){
                 return false;
-            else
-                System.out.println("Invalid Input");
+            }
+            else {
+                System.out.println("Invalid Input. Must use 'y' or 'n'.");
+            }
         }
     }
-
+    
+    /**
+     * Gains input from the user as needed.
+     * 
+     * @return Most recent input string from the user
+     */
     private static String stringIn(){
         String stringIn="";
 
@@ -244,13 +264,18 @@ public class Tweeter {
                 e.printStackTrace();
             }
 
-            if(stringIn.length()>0)//block error from empty return
-               return stringIn;
-
-            System.out.println("Invalid Input");
+            if(stringIn.length() > 0){ //block error from empty return
+                return stringIn;
+            }
+            //if user didn't enter anything, they try again.
+            System.out.println("Invalid Input. Please try again.");
         }
     }
-
+    
+    /**
+     * 
+     * @return Allows for capitalized letters when choosing menu options.
+     */
     private static char charIn(){
         String s = stringIn();
         char c;
@@ -261,4 +286,3 @@ public class Tweeter {
         return c;
     }
 }
-
